@@ -1,35 +1,70 @@
-const { obtenerTodosLosProductosArray, obtenerUnProductoPorIdArray, crearNuevoProductoArray, actualizarProductoPorIdArray, borrarUnProductoPorIdArray } = require("../services/productos.services")
+const {
+  obtenerTodosLosProductosArray,
+  obtenerUnProductoPorIdArray,
+  crearNuevoProductoArray,
+  actualizarProductoPorIdArray,
+  borrarUnProductoPorIdArray,
+} = require("../services/productos.services");
 
-const obtenerTodosProductos = (req, res) => {
-  const { productos, statusCode } = obtenerTodosLosProductosArray()
-  res.status(statusCode).json({ productos })
-}
+const obtenerTodosProductos = async (req, res) => {
+  const { productos, statusCode, error } =
+    await obtenerTodosLosProductosArray();
 
-const obtenrUnProducto = (req, res) => {
-  //req - body - params - query
-  const { producto, msg, statusCode } = obtenerUnProductoPorIdArray(req.params.id)
-  res.status(statusCode).json(producto ? { producto } : { msg })
-}
+  try {
+    res.status(statusCode).json({ productos });
+  } catch {
+    res.status(statusCode).json({ error });
+  }
+};
 
-const crearProducto = (req, res) => {
-  const { msg, statusCode } = crearNuevoProductoArray(req.body)
-  res.status(statusCode).json({ msg })
-}
+const obtenrUnProducto = async (req, res) => {
+  const { producto, msg, statusCode } = await obtenerUnProductoPorIdArray(
+    req.params.id
+  );
+  try {
+    res.status(statusCode).json(producto ? { producto } : { msg });
+  } catch {
+    res.status(statusCode).json({ error });
+  }
+};
 
-const actualizarProducto = (req, res) => {
-  const { msg, statusCode } = actualizarProductoPorIdArray(req.params.id, req.body)
-  res.status(statusCode).json({ msg })
-}
+const crearProducto = async (req, res) => {
+  const { msg, statusCode, error } = await crearNuevoProductoArray(req.body);
 
-const borrarProducto = (req, res) => {
-  const { msg, statusCode } = borrarUnProductoPorIdArray(req.params.id)
-  res.status(statusCode).json({ msg })
-}
+  try {
+    res.status(statusCode).json({ msg });
+  } catch {
+    res.status(statusCode).json({ error });
+  }
+};
+
+const actualizarProducto = async (req, res) => {
+  const { msg, statusCode, error } = await actualizarProductoPorIdArray(
+    req.params.id,
+    req.body
+  );
+  try {
+    res.status(statusCode).json({ msg });
+  } catch {
+    res.status(statusCode).json({ error });
+  }
+};
+
+const borrarProducto = async (req, res) => {
+  const { msg, statusCode, error } = await borrarUnProductoPorIdArray(
+    req.params.id
+  );
+  try {
+    res.status(statusCode).json({ msg });
+  } catch {
+    res.status(statusCode).json({ error });
+  }
+};
 
 module.exports = {
   obtenerTodosProductos,
   obtenrUnProducto,
   crearProducto,
   actualizarProducto,
-  borrarProducto
-}
+  borrarProducto,
+};
