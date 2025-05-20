@@ -19,7 +19,8 @@ const obtenerTodosProductos = async (req, res) => {
 
 const obtenrUnProducto = async (req, res) => {
   const { producto, msg, statusCode } = await obtenerUnProductoPorIdArray(
-    req.params.id
+    req.params.id,
+    req
   );
   try {
     res.status(statusCode).json(producto ? { producto } : { msg });
@@ -29,7 +30,10 @@ const obtenrUnProducto = async (req, res) => {
 };
 
 const crearProducto = async (req, res) => {
-  const { msg, statusCode, error } = await crearNuevoProductoArray(req.body);
+  const { msg, statusCode, error } = await crearNuevoProductoArray(
+    req.body,
+    req
+  );
 
   try {
     res.status(statusCode).json({ msg });
@@ -52,7 +56,8 @@ const actualizarProducto = async (req, res) => {
 
 const borrarProducto = async (req, res) => {
   const { msg, statusCode, error } = await borrarUnProductoPorIdArray(
-    req.params.id
+    req.params.id,
+    req
   );
   try {
     res.status(statusCode).json({ msg });

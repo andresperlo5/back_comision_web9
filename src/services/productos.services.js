@@ -1,4 +1,6 @@
+const { validationResult } = require("express-validator");
 const ProductosModel = require("../model/productos.model");
+const cloudinary = require("../helpers/cloudinary.config.helpers");
 
 const obtenerTodosLosProductosArray = async () => {
   try {
@@ -15,7 +17,16 @@ const obtenerTodosLosProductosArray = async () => {
   }
 };
 
-const obtenerUnProductoPorIdArray = async (idProducto) => {
+const obtenerUnProductoPorIdArray = async (idProducto, req) => {
+  const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     const producto = await ProductosModel.findOne({ _id: idProducto });
 
@@ -38,9 +49,21 @@ const obtenerUnProductoPorIdArray = async (idProducto) => {
   }
 };
 
-const crearNuevoProductoArray = async (body) => {
+const crearNuevoProductoArray = async (body, req) => {
+  console.log(req.file);
+  const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     const nuevoProducto = new ProductosModel(body);
+    const imagen = await cloudinary.uploader.upload(req.file.path);
+    nuevoProducto.imagen = imagen.secure_url;
     await nuevoProducto.save();
 
     return {
@@ -56,7 +79,16 @@ const crearNuevoProductoArray = async (body) => {
   }
 };
 
-const actualizarProductoPorIdArray = async (idProducto, body) => {
+const actualizarProductoPorIdArray = async (idProducto, body, req) => {
+  const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     await ProductosModel.findByIdAndUpdate({ _id: idProducto }, body);
 
@@ -72,7 +104,16 @@ const actualizarProductoPorIdArray = async (idProducto, body) => {
   }
 };
 
-const borrarUnProductoPorIdArray = async (idProducto) => {
+const borrarUnProductoPorIdArray = async (idProducto, req) => {
+  const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     const producto = await ProductosModel.findOne({ _id: idProducto });
 

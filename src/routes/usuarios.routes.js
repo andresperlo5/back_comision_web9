@@ -11,18 +11,72 @@ const {
 } = require("../controllers/usuarios.controllers");
 const auth = require("../middlewares/auth");
 const router = express.Router();
+const { check } = require("express-validator");
 
 //rutas
 router.get("/", auth("admin"), obtenerTodosLosUsuarios);
-router.get("/:id", auth("admin"), obtenerUnUsuarioPorId);
+router.get(
+  "/:id",
+  [check("id", "ID incorrecto. Formato no corresponde a mongoose").isMongoId()],
 
-router.put("/:id", auth(["admin", "usuario"]), editarInfoUsuarioPorId);
-router.put("/enabled/:id", auth("admin"), altaLogicaUsuarioPorId);
-router.put("/disabled/:id", auth("admin"), bajaLogicaUsuarioPorId);
+  obtenerUnUsuarioPorId
+);
 
-router.post("/register", registroUsuario);
-router.post("/login", iniciarSesionUsuario);
+router.put(
+  "/:id",
+  [check("id", "ID incorrecto. Formato no corresponde a mongoose").isMongoId()],
+  auth(["admin", "usuario"]),
+  editarInfoUsuarioPorId
+);
+router.put(
+  "/enabled/:id",
+  [check("id", "ID incorrecto. Formato no corresponde a mongoose").isMongoId()],
+  auth("admin"),
+  altaLogicaUsuarioPorId
+);
+router.put(
+  "/disabled/:id",
+  [check("id", "ID incorrecto. Formato no corresponde a mongoose").isMongoId()],
+  auth("admin"),
+  bajaLogicaUsuarioPorId
+);
 
-router.delete("/:id", auth("admin"), bajaFisicaUsuarioPorId);
+router.post(
+  "/register",
+  [
+    check("nombreUsuario", "Campo USUARIO esta vacio").notEmpty(),
+    check(
+      "nombreUsuario",
+      "ERROR. Caracteres soportados solo entre 5 y 40"
+    ).isLength({ min: 5 }, { max: 40 }),
+    check("emailUsuario", "Campo EMAIL vacio").notEmpty(),
+    check("emailUsuario", "ERROR. Formato incorrecto").isEmail(),
+    check("contrasenia", "Campo CONTRASEÑA vacio").notEmpty(),
+    check(
+      "contrasenia",
+      "ERROR. Caracteres soportados solo entre 8 y 40"
+    ).isLength({ min: 8 }, { max: 40 }),
+  ],
+  registroUsuario
+);
+router.post(
+  "/login",
+  [
+    check("nombreUsuario", "Campo USUARIO esta vacio").notEmpty(),
+    check("contrasenia", "Campo CONTRASEÑA vacio").notEmpty(),
+    check(
+      "contrasenia",
+      "ERROR. Caracteres soportados solo entre 8 y 40"
+    ).isLength({ min: 8 }, { max: 40 }),
+  ],
+  iniciarSesionUsuario
+);
+
+router.delete(
+  "/:id",
+  [check("id", "ID incorrecto. Formato no corresponde a mongoose").isMongoId()],
+  auth("admin"),
+  bajaFisicaUsuarioPorId
+);
 
 module.exports = router;

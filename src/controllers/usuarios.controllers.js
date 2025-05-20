@@ -19,11 +19,12 @@ const obtenerTodosLosUsuarios = async (req, res) => {
 };
 
 const obtenerUnUsuarioPorId = async (req, res) => {
-  const { usuario, statusCode, error } = await obtenerUnUsuariosPorIdBD(
-    req.params.id
+  const { msg, usuario, statusCode, error } = await obtenerUnUsuariosPorIdBD(
+    req.params.id,
+    req
   );
   try {
-    res.status(statusCode).json({ usuario });
+    res.status(statusCode).json(msg ? { msg } : { usuario });
   } catch {
     res.status(statusCode).json({ error });
   }
@@ -32,7 +33,8 @@ const obtenerUnUsuarioPorId = async (req, res) => {
 const editarInfoUsuarioPorId = async (req, res) => {
   const { msg, statusCode, error } = await editarInfoUsuarioPorIdBD(
     req.params.id,
-    req.body
+    req.body,
+    req
   );
   try {
     res.status(statusCode).json({ msg });
@@ -43,7 +45,8 @@ const editarInfoUsuarioPorId = async (req, res) => {
 
 const altaLogicaUsuarioPorId = async (req, res) => {
   const { msg, statusCode, error } = await altaLogicaUsuarioPorIdBD(
-    req.params.id
+    req.params.id,
+    req
   );
   try {
     res.status(statusCode).json({ msg });
@@ -54,7 +57,8 @@ const altaLogicaUsuarioPorId = async (req, res) => {
 
 const bajaLogicaUsuarioPorId = async (req, res) => {
   const { msg, statusCode, error } = await bajaLogicaUsuarioPorIdBD(
-    req.params.id
+    req.params.id,
+    req
   );
   try {
     res.status(statusCode).json({ msg });
@@ -65,7 +69,8 @@ const bajaLogicaUsuarioPorId = async (req, res) => {
 
 const bajaFisicaUsuarioPorId = async (req, res) => {
   const { msg, statusCode, error } = await bajaFisicaUsuarioPorIdBD(
-    req.params.id
+    req.params.id,
+    req
   );
   try {
     res.status(statusCode).json({ msg });
@@ -75,21 +80,20 @@ const bajaFisicaUsuarioPorId = async (req, res) => {
 };
 
 const registroUsuario = async (req, res) => {
-  const { msg, statusCode, error } = await registrarUsuarioBD(req.body);
+  const { msg, statusCode, error } = await registrarUsuarioBD(req.body, req);
   try {
-    res.status(statusCode).json({ msg });
+    res.status(statusCode).json({ msg, statusCode });
   } catch {
     res.status(statusCode).json({ error });
   }
 };
 
 const iniciarSesionUsuario = async (req, res) => {
-  const { msg, statusCode, token, error } = await iniciarSesionUsuarioDB(
-    req.body
-  );
+  const { msg, statusCode, token, error, rolUsuario } =
+    await iniciarSesionUsuarioDB(req.body, req);
 
   try {
-    res.status(statusCode).json({ msg, token });
+    res.status(statusCode).json({ msg, token, rolUsuario });
   } catch {
     res.status(statusCode).json({ error });
   }

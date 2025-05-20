@@ -6,7 +6,8 @@ const {
 const agregarProductoCarrito = async (req, res) => {
   const { msg, statusCode, error } = await agregarProductoCarritoBD(
     req.idCarrito,
-    req.params.idProducto
+    req.params.idProducto,
+    req
   );
   try {
     res.status(statusCode).json({ msg });
@@ -18,7 +19,8 @@ const agregarProductoCarrito = async (req, res) => {
 const eliminarProductoCarrito = async (req, res) => {
   const { msg, statusCode, error } = await eliminarProductoCarritoBD(
     req.idCarrito,
-    req.params.idProducto
+    req.params.idProducto,
+    req
   );
   try {
     res.status(statusCode).json({ msg });

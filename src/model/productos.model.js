@@ -17,7 +17,7 @@ const ProductosSchema = new mongoose.Schema({
   imagen: {
     type: String,
     trim: true,
-    required: true,
+    default: "url",
   },
   descripcion: {
     type: String,

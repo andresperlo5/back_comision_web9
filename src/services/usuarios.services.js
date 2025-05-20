@@ -3,6 +3,9 @@ const argon = require("argon2");
 const jwt = require("jsonwebtoken");
 const CarritosModel = require("../model/carritos.model");
 const FavoritosModel = require("../model/favoritos.model");
+const { validationResult } = require("express-validator");
+const { validarFormato } = require("../helpers/validator.helpers");
+const { registroExitoso } = require("../utils/messages.nodemailer.utils");
 
 const obtenerTodosLosUsuariosBD = async () => {
   try {
@@ -20,7 +23,24 @@ const obtenerTodosLosUsuariosBD = async () => {
   }
 };
 
-const obtenerUnUsuariosPorIdBD = async (idUsuario) => {
+const obtenerUnUsuariosPorIdBD = async (idUsuario, req) => {
+  /*   const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  } */
+
+  const res = validarFormato(req);
+  if (res) {
+    return {
+      msg: res.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     const usuario = await UsuariosModel.findOne({ _id: idUsuario });
     /*   const usuario = await UsuariosModel.findOne({ _id: idUsuario }).select(
@@ -31,6 +51,7 @@ const obtenerUnUsuariosPorIdBD = async (idUsuario) => {
       statusCode: 200,
     };
   } catch (error) {
+    console.log(error);
     return {
       error,
       statusCode: 500,
@@ -39,6 +60,15 @@ const obtenerUnUsuariosPorIdBD = async (idUsuario) => {
 };
 
 const editarInfoUsuarioPorIdBD = async (idUsuario, body) => {
+  const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     await UsuariosModel.findByIdAndUpdate({ _id: idUsuario }, body);
 
@@ -54,7 +84,16 @@ const editarInfoUsuarioPorIdBD = async (idUsuario, body) => {
   }
 };
 
-const altaLogicaUsuarioPorIdBD = async (idUsuario) => {
+const altaLogicaUsuarioPorIdBD = async (idUsuario, req) => {
+  const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     const usuario = await UsuariosModel.findOne({ _id: idUsuario });
     usuario.estado = "habilitado";
@@ -73,6 +112,15 @@ const altaLogicaUsuarioPorIdBD = async (idUsuario) => {
 };
 
 const bajaLogicaUsuarioPorIdBD = async (idUsuario) => {
+  const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     const usuario = await UsuariosModel.findOne({ _id: idUsuario });
     usuario.estado = "deshabilitado";
@@ -91,6 +139,15 @@ const bajaLogicaUsuarioPorIdBD = async (idUsuario) => {
 };
 
 const bajaFisicaUsuarioPorIdBD = async (idUsuario) => {
+  const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     const usuarioExiste = await UsuariosModel.findOne({ _id: idUsuario });
 
@@ -115,7 +172,16 @@ const bajaFisicaUsuarioPorIdBD = async (idUsuario) => {
   }
 };
 
-const registrarUsuarioBD = async (body) => {
+const registrarUsuarioBD = async (body, req) => {
+  const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     const nuevoUsuario = new UsuariosModel(body);
     const nuevoCarrito = new CarritosModel({ idUsuario: nuevoUsuario._id });
@@ -125,14 +191,26 @@ const registrarUsuarioBD = async (body) => {
     nuevoUsuario.idCarrito = nuevoCarrito._id;
     nuevoUsuario.idFavoritos = nuevoFavoritos._id;
 
-    await nuevoCarrito.save();
-    await nuevoFavoritos.save();
-    await nuevoUsuario.save();
+    const { info, rejected } = await registroExitoso(
+      nuevoUsuario.emailUsuario,
+      nuevoUsuario.nombreUsuario
+    );
 
-    return {
-      msg: "Usuario registrado con exito",
-      statusCode: 201,
-    };
+    if (info && !rejected.length) {
+      await nuevoCarrito.save();
+      await nuevoFavoritos.save();
+      await nuevoUsuario.save();
+
+      return {
+        msg: "Usuario registrado con exito",
+        statusCode: 201,
+      };
+    } else {
+      return {
+        msg: "ERROR al intentar crear el usuario",
+        statusCode: 422,
+      };
+    }
   } catch (error) {
     console.log(error);
     return {
@@ -142,7 +220,16 @@ const registrarUsuarioBD = async (body) => {
   }
 };
 
-const iniciarSesionUsuarioDB = async (body) => {
+const iniciarSesionUsuarioDB = async (body, req) => {
+  const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     const usuarioExiste = await UsuariosModel.findOne({
       nombreUsuario: body.nombreUsuario,
@@ -182,6 +269,7 @@ const iniciarSesionUsuarioDB = async (body) => {
       return {
         msg: "usuario logueado",
         token,
+        rolUsuario: usuarioExiste.rol,
         statusCode: 200,
       };
     } else {

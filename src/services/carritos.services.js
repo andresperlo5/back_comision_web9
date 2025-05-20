@@ -1,7 +1,16 @@
 const CarritosModel = require("../model/carritos.model");
 const ProductosModel = require("../model/productos.model");
 
-const agregarProductoCarritoBD = async (idCarrito, idProducto) => {
+const agregarProductoCarritoBD = async (idCarrito, idProducto, req) => {
+  const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     const carrito = await CarritosModel.findOne({ _id: idCarrito });
     const producto = await ProductosModel.findOne({ _id: idProducto });
@@ -33,7 +42,16 @@ const agregarProductoCarritoBD = async (idCarrito, idProducto) => {
   }
 };
 
-const eliminarProductoCarritoBD = async (idCarrito, idProducto) => {
+const eliminarProductoCarritoBD = async (idCarrito, idProducto, req) => {
+  const errorValidator = validationResult(req);
+
+  if (!errorValidator.isEmpty()) {
+    return {
+      msg: errorValidator.array(),
+      statusCode: 422,
+    };
+  }
+
   try {
     const carrito = await CarritosModel.findOne({ _id: idCarrito });
     const productoIndex = carrito.productos.findIndex(
