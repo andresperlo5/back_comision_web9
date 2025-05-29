@@ -5,6 +5,7 @@ const {
   crearProducto,
   actualizarProducto,
   borrarProducto,
+  agregarImagenProducto,
 } = require("../controllers/productos.controllers");
 const auth = require("../middlewares/auth");
 const router = express.Router();
@@ -22,7 +23,6 @@ router.get(
 //Crear un producto
 router.post(
   "/",
-  multerMiddlewares.single("imagen"),
   /*   [
     nombre - precio - descripcion - imagen - 
     check("nombre", "ERROR. Campo NOMBRE esta vacio").notEmpty(),
@@ -32,6 +32,11 @@ router.post(
   ],
   auth("admin"), */
   crearProducto
+);
+router.put(
+  "/addImage/:id",
+  multerMiddlewares.single("imagen"),
+  agregarImagenProducto
 );
 //Actualizar un producto
 router.put(

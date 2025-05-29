@@ -3,6 +3,17 @@ const path = require("path");
 
 module.exports = multer({
   storage: multer.diskStorage({}),
+  /*   storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "/public");
+    },
+    filename: (req, file, cb) => {
+      console.log(file);
+      const ext = path.extname(file.originalname);
+      const nombreImagen = `${file.fieldname}-${Date.now()}${ext}`;
+      cb(null, nombreImagen);
+    },
+  }), */
   fileFilter: (req, file, cb) => {
     const ext = path.extname(file.originalname);
 
@@ -13,3 +24,5 @@ module.exports = multer({
     cb(null, true);
   },
 });
+//timestamp
+// nombre-12309218302103.ext

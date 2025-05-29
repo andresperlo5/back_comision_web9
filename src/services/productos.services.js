@@ -62,13 +62,14 @@ const crearNuevoProductoArray = async (body, req) => {
 
   try {
     const nuevoProducto = new ProductosModel(body);
-    const imagen = await cloudinary.uploader.upload(req.file.path);
-    nuevoProducto.imagen = imagen.secure_url;
-    await nuevoProducto.save();
+    /*    nuevoProducto.imagen = req.file.path;
+    nuevoProducto.save(); */
+    nuevoProducto.save();
 
     return {
       msg: "Producto creado con exito",
       statusCode: 201,
+      idProducto: nuevoProducto._id,
     };
   } catch (error) {
     console.log(error);
@@ -77,6 +78,18 @@ const crearNuevoProductoArray = async (body, req) => {
       statusCode: 500,
     };
   }
+};
+
+const agregarImagenProductoArray = async (idProducto, file) => {
+  const producto = await ProductosModel.findOne({ _id: idProducto });
+  const imagen = await cloudinary.uploader.upload(file.path);
+  producto.imagen = imagen.secure_url;
+  await producto.save();
+
+  return {
+    msg: "imagen agrega al producto",
+    statusCode: 200,
+  };
 };
 
 const actualizarProductoPorIdArray = async (idProducto, body, req) => {
@@ -144,4 +157,5 @@ module.exports = {
   crearNuevoProductoArray,
   actualizarProductoPorIdArray,
   borrarUnProductoPorIdArray,
+  agregarImagenProductoArray,
 };
