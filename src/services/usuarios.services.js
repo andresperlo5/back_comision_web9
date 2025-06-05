@@ -10,7 +10,6 @@ const { registroExitoso } = require("../utils/messages.nodemailer.utils");
 const obtenerTodosLosUsuariosBD = async () => {
   try {
     const usuarios = await UsuariosModel.find();
-    //  const usuarios = await UsuariosModel.find().select("-contrasenia -__v");
     return {
       usuarios,
       statusCode: 200,
@@ -24,15 +23,6 @@ const obtenerTodosLosUsuariosBD = async () => {
 };
 
 const obtenerUnUsuariosPorIdBD = async (idUsuario, req) => {
-  /*   const errorValidator = validationResult(req);
-
-  if (!errorValidator.isEmpty()) {
-    return {
-      msg: errorValidator.array(),
-      statusCode: 422,
-    };
-  } */
-
   const res = validarFormato(req);
   if (res) {
     return {
@@ -43,15 +33,11 @@ const obtenerUnUsuariosPorIdBD = async (idUsuario, req) => {
 
   try {
     const usuario = await UsuariosModel.findOne({ _id: idUsuario });
-    /*   const usuario = await UsuariosModel.findOne({ _id: idUsuario }).select(
-        "-contrasenia -__v"
-      ); */
     return {
       usuario,
       statusCode: 200,
     };
   } catch (error) {
-    console.log(error);
     return {
       error,
       statusCode: 500,
@@ -212,7 +198,6 @@ const registrarUsuarioBD = async (body, req) => {
       };
     }
   } catch (error) {
-    console.log(error);
     return {
       error,
       statusCode: 500,
@@ -249,8 +234,6 @@ const iniciarSesionUsuarioDB = async (body, req) => {
       };
     }
 
-    console.log(usuarioExiste);
-
     const verificarContrasenia = await argon.verify(
       usuarioExiste.contrasenia,
       body.contrasenia
@@ -279,7 +262,6 @@ const iniciarSesionUsuarioDB = async (body, req) => {
       };
     }
   } catch (error) {
-    console.log(error);
     return {
       error,
       statusCode: 500,

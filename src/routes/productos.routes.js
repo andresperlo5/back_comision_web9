@@ -11,10 +11,8 @@ const auth = require("../middlewares/auth");
 const router = express.Router();
 const { check } = require("express-validator");
 const multerMiddlewares = require("../middlewares/multer.middlewares");
-//rutas
-//Obtener todos los productos
+
 router.get("/", obtenerTodosProductos);
-//Obtener un producto
 router.get(
   "/:id",
   [check("id", "ID incorrecto. Formato no corresponde a mongoose").isMongoId()],

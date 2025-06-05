@@ -50,7 +50,6 @@ const obtenerUnProductoPorIdArray = async (idProducto, req) => {
 };
 
 const crearNuevoProductoArray = async (body, req) => {
-  console.log(req.file);
   const errorValidator = validationResult(req);
 
   if (!errorValidator.isEmpty()) {
@@ -72,7 +71,6 @@ const crearNuevoProductoArray = async (body, req) => {
       idProducto: nuevoProducto._id,
     };
   } catch (error) {
-    console.log(error);
     return {
       error,
       statusCode: 500,

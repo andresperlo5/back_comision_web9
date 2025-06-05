@@ -8,7 +8,6 @@ module.exports = multer({
       cb(null, "/public");
     },
     filename: (req, file, cb) => {
-      console.log(file);
       const ext = path.extname(file.originalname);
       const nombreImagen = `${file.fieldname}-${Date.now()}${ext}`;
       cb(null, nombreImagen);

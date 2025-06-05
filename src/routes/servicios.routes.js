@@ -1,8 +1,14 @@
 const express = require("express");
-const pagarProductosMP = require("../controllers/servicios.controllers");
+const {
+  pagarProductosMP,
+  recuperarContraseniaUsuario,
+  cambiarContraseniaUsuario,
+} = require("../controllers/servicios.controllers");
 const router = express.Router();
 
 //rutas
-router.post("/", pagarProductosMP);
+router.post("/pagoMercadoPago", pagarProductosMP);
+router.post("/recoveryPass", recuperarContraseniaUsuario);
+router.put("/changePassUser", cambiarContraseniaUsuario);
 
 module.exports = router;

@@ -31,7 +31,6 @@ const obtenrUnProducto = async (req, res) => {
 };
 
 const crearProducto = async (req, res) => {
-  console.log(req.body);
   const { msg, statusCode, error, idProducto } = await crearNuevoProductoArray(
     req.body,
     req

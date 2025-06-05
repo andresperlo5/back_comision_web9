@@ -1,5 +1,21 @@
+const { validationResult } = require("express-validator");
 const CarritosModel = require("../model/carritos.model");
 const ProductosModel = require("../model/productos.model");
+
+const obtenerProductosDelCarritoBD = async (idCarrito) => {
+  try {
+    const carrito = await CarritosModel.findById(idCarrito);
+    return {
+      productos: carrito.productos,
+      statusCode: 200,
+    };
+  } catch (error) {
+    return {
+      error,
+      statusCode: 500,
+    };
+  }
+};
 
 const agregarProductoCarritoBD = async (idCarrito, idProducto, req) => {
   const errorValidator = validationResult(req);
@@ -34,7 +50,6 @@ const agregarProductoCarritoBD = async (idCarrito, idProducto, req) => {
       statusCode: 200,
     };
   } catch (error) {
-    console.log(error);
     return {
       error,
       statusCode: 500,
@@ -74,7 +89,6 @@ const eliminarProductoCarritoBD = async (idCarrito, idProducto, req) => {
       statusCode: 200,
     };
   } catch (error) {
-    console.log(error);
     return {
       error,
       statusCode: 500,
@@ -83,6 +97,7 @@ const eliminarProductoCarritoBD = async (idCarrito, idProducto, req) => {
 };
 
 module.exports = {
+  obtenerProductosDelCarritoBD,
   agregarProductoCarritoBD,
   eliminarProductoCarritoBD,
 };

@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 module.exports = (rolRuta) => (req, res, next) => {
   const token = req.header("auth");
   const verificarToken = jwt.verify(token, process.env.JWT_SECRET);
-  console.log(rolRuta);
   if (
     verificarToken.rolUsuario === rolRuta ||
     rolRuta.includes(verificarToken.rolUsuario)

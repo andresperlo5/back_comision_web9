@@ -12,8 +12,6 @@ const registroExitoso = async (userEMail, nameUser) => {
     `, // HTML body
   });
 
-  console.log(info);
-
   return {
     info: info.response.includes("OK"),
     rejected: info.rejected,
@@ -21,7 +19,7 @@ const registroExitoso = async (userEMail, nameUser) => {
 };
 
 const recuperarContrasenia = async (userEMail, token) => {
-  const info = await transporter.sendMail({
+  await transporter.sendMail({
     from: `"Comision-Web-9" <${process.env.GMAIL_USER}>`,
     to: `${userEMail}`,
     subject: `Recupera tu contraseña en pocos pasos✔`,
@@ -29,10 +27,9 @@ const recuperarContrasenia = async (userEMail, token) => {
     html: `
     <img src="https://i.gifer.com/89WP.gif" alt="gif2">
     <h1>Ya falta menos para que puedas ingresar a tu cuenta de nuevo.</h1>
-    <a href=/recuperarContrasenia/${token}>Ir a recuperar contraseña</a>
+    <a href=${process.env.FRONT_URL}/recoveryPass?token=${token}>Ir a recuperar contraseña</a>
     `, // HTML body
   });
-  console.log("Message sent:", info);
 };
 
 module.exports = {
