@@ -4,10 +4,11 @@ const {
   recuperarContraseniaUsuario,
   cambiarContraseniaUsuario,
 } = require("../controllers/servicios.controllers");
+const auth = require("../middlewares/auth");
 const router = express.Router();
 
 //rutas
-router.post("/pagoMercadoPago", pagarProductosMP);
+router.post("/pagoMercadoPago", auth("usuario"), pagarProductosMP);
 router.post("/recoveryPass", recuperarContraseniaUsuario);
 router.put("/changePassUser", cambiarContraseniaUsuario);
 
